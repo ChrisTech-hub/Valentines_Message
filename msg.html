@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Surprise 💘</title>
+
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #ff4d6d;
+    font-size: 1.8rem;
+}
+
+p {
+    font-size: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: all 0.4s ease;
+    box-sizing: border-box;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 25px;
+    border-radius: 20px;
+    border: none;
+    background: #ff4d6d;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #e63b5c;
+}
+
+.letter {
+    display: none;
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 15px;
+    background: #fff0f5;
+    max-height: 250px;
+    overflow-y: auto;
+    animation: popUp 0.8s ease forwards;
+    word-wrap: break-word;
+}
+
+.letter::-webkit-scrollbar {
+    width: 6px;
+}
+
+.letter::-webkit-scrollbar-thumb {
+    background: #ffb3c6;
+    border-radius: 10px;
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+
+.person-img {
+    position: absolute;
+    width: 25vw;
+    max-width: 140px;
+    opacity: 0.8;
+    animation: floatSlow 10s ease-in-out infinite alternate;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.heart {
+    position: absolute;
+    font-size: 3vw;
+    max-font-size: 12px;
+    animation: float 4s linear infinite;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.fade-out {
+    opacity: 0 !important;
+    transform: scale(0.9);
+    transition: all 0.5s ease;
+}
+
+/* ===== Animations ===== */
+@keyframes popUp { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-6px); } 100% { transform: translateX(0); } }
+@keyframes float { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
+@keyframes floatSlow { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== Responsive Media Queries ===== */
+@media (max-width: 600px) {
+    h1 { font-size: 1.5rem; }
+    p { font-size: 0.95rem; }
+    input { font-size: 0.95rem; }
+    button { font-size: 0.95rem; padding: 8px 20px; }
+    .letter { font-size: 0.95rem; }
+    .heart { font-size: 10vw; }
+    .person-img { width: 35vw; } 
+}
+
+@media (max-width: 400px) {
+    h1 { font-size: 1.3rem; }
+    p, input, button, .letter { font-size: 0.9rem; }
+    .heart { font-size: 12vw; }
+    .person-img { width: 40vw; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="box">
+    <h1>Valentine Access</h1>
+    <p id="prompt-text">Enter the secret password</p>
+    <input type="password" id="password" placeholder="Password">
+    <br>
+    <button id="openBtn" onclick="checkPassword()">Open💌</button>
+    <div class="letter" id="letter"></div>
+</div>
+
+<script>
+const people = {
+    "rose123": {
+        name: "Rose",
+        text: "Happy Valentine’s Day 🌹 You make everything softer and sweeter just by being you. Thank you for all the small moments that mean more than you know.",
+        images: [
+            "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/1718445969090.jpg",
+            "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/1718445989400.jpg",
+            "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/1728090061025.jpg"
+        ]
+    },
+    "sunny456": { name:"Sunny", text:"You’re my sunshine ☀️ Even on cloudy days, you somehow make everything feel warmer and brighter.", images:["sun1.jpg","sun2.jpg"] },
+    "moon789": { name:"Moon", text:"Calm, beautiful, and comforting 🌙 You bring peace in ways words can’t fully explain.", images:["moon1.jpg","moon2.jpg"] },
+    "heart999": { name:"Heart", text:"Some people feel like home ❤️ You’re one of those rare souls who make everything feel safe.", images:["heart1.jpg","heart2.jpg"] },
+    "star000": { name:"Star", text:"You shine without trying ✨ Your presence alone makes the night brighter.", images:["star1.jpg","star2.jpg"] }
+};
+
+function clearImages() { document.querySelectorAll(".person-img").forEach(img => img.remove()); }
+
+function showPersonImages(images) {
+    images.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.className = "person-img";
+        img.style.top = Math.random() * 70 + "%";
+        img.style.left = Math.random() * 80 + "%";
+        img.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+        document.body.appendChild(img);
+    });
+}
+
+function checkPassword() {
+    const input = document.getElementById("password").value;
+    const letter = document.getElementById("letter");
+    const box = document.getElementById("box");
+    const promptText = document.getElementById("prompt-text");
+    const openBtn = document.getElementById("openBtn");
+
+    clearImages();
+
+    if (people[input]) {
+        // Fade out input and button
+        promptText.classList.add("fade-out");
+        openBtn.classList.add("fade-out");
+        document.getElementById("password").classList.add("fade-out");
+
+        setTimeout(() => {
+            promptText.style.display = "none";
+            openBtn.style.display = "none";
+            document.getElementById("password").style.display = "none";
+
+            letter.style.display = "block";
+            letter.innerHTML = `
+                <h3>Dear ${people[input].name},</h3>
+                <p>${people[input].text}</p>
+                <button onclick="returnHome()">Return Home</button>
+            `;
+
+            showPersonImages(people[input].images);
+            createHearts();
+        }, 500);
+    } else {
+        box.classList.add("shake");
+        createBrokenHearts();
+        setTimeout(() => box.classList.remove("shake"), 400);
+    }
+}
+
+function returnHome() {
+    const letter = document.getElementById("letter");
+    const promptText = document.getElementById("prompt-text");
+    const openBtn = document.getElementById("openBtn");
+    const passwordInput = document.getElementById("password");
+
+    letter.style.display = "none";
+    promptText.style.display = "block";
+    openBtn.style.display = "inline-block";
+    passwordInput.style.display = "inline-block";
+    passwordInput.value = "";
+
+    promptText.classList.remove("fade-out");
+    openBtn.classList.remove("fade-out");
+    passwordInput.classList.remove("fade-out");
+
+    clearImages();
+}
+
+function createHearts() {
+    for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "💖";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+    }
+}
+
+function createBrokenHearts() {
+    for (let i = 0; i < 14; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "💔";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 2 + 1.5) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+    }
+}
+</script>
+
+</body>
+</html>
