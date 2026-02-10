@@ -177,17 +177,21 @@ const people = {
 
 function clearImages() { document.querySelectorAll(".person-img").forEach(img => img.remove()); }
 
-function showPersonImages(images) {
-    images.forEach(src => {
-        const img = document.createElement("img");
-        img.src = src;
-        img.className = "person-img";
-        img.style.top = Math.random() * 70 + "%";
-        img.style.left = Math.random() * 80 + "%";
-        img.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
-        document.body.appendChild(img);
+function showPersonImages(images, copies = 5) {
+    images.forEach(src => {       
+        for (let i = 0; i < copies; i++) {  
+            const img = document.createElement("img");
+            img.src = src;
+            img.className = "person-img";
+            img.style.position = "absolute"; 
+            img.style.top = Math.random() * 70 + "%";
+            img.style.left = Math.random() * 80 + "%";
+            img.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+            document.body.appendChild(img);
+        }
     });
 }
+showPersonImages(images, 3);
 
 function checkPassword() {
     const input = document.getElementById("password").value;
