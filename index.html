@@ -177,7 +177,7 @@ const people = {
 
 function clearImages() { document.querySelectorAll(".person-img").forEach(img => img.remove()); }
 
-function showPersonImages(images, copies = 5) {
+function showPersonImages(images, copies = 3) {
     images.forEach(src => {       
         for (let i = 0; i < copies; i++) {  
             const img = document.createElement("img");
