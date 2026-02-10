@@ -99,9 +99,15 @@ button:hover { background: #e63b5c; }
     100% { transform: translateX(0); }
 }
 
-@keyframes float {
-    from { transform: translateY(100vh); opacity: 1; }
-    to { transform: translateY(-10vh); opacity: 0; }
+@keyframes floatRandom {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) rotate(var(--r));
+        opacity: 0;
+    }
 }
 
 @keyframes floatSlow {
@@ -196,12 +202,27 @@ function hearts(symbol, count) {
         const h = document.createElement("div");
         h.className = "heart";
         h.textContent = symbol;
+
+        // Random starting position
         h.style.left = Math.random() * 100 + "vw";
+        h.style.top = Math.random() * 100 + "vh";
+
+        // Random direction and rotation
+        const x = (Math.random() * 200 - 100) + "px"; // horizontal movement
+        const y = (Math.random() * 200 - 100) + "px"; // vertical movement
+        const r = (Math.random() * 360 - 180) + "deg"; // rotation
+
+        h.style.setProperty("--x", x);
+        h.style.setProperty("--y", y);
+        h.style.setProperty("--r", r);
+        h.style.animation = `floatRandom ${2 + Math.random() * 3}s ease-out forwards`;
+
         document.body.appendChild(h);
-        setTimeout(() => h.remove(), 4000);
+
+        // Remove after animation
+        setTimeout(() => h.remove(), 5000);
     }
 }
-
 function checkPassword() {
     const name = userName.value.trim();
     const pass = password.value.trim();
