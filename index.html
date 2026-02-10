@@ -70,6 +70,14 @@ button:hover { background: #e63b5c; }
     box-sizing: border-box;
 }
 
+.admin{
+    position:fixed;
+    top:10px;
+    right:10px;
+    cursor:pointer;
+    border:none;
+    border-radius:20px;
+}
 
 .shake { animation: shake 0.4s; }
 
@@ -125,7 +133,7 @@ button:hover { background: #e63b5c; }
 <body>
 
 <!-- admin icon -->
-<div style="position:fixed;top:10px;right:10px;cursor:pointer" onclick="adminLogin()">⚙️</div>
+<div class="admin"onclick="adminLogin()">⚙️</div>
 
 <div class="container" id="box">
     <h1>Valentine Access</h1>
@@ -138,9 +146,25 @@ button:hover { background: #e63b5c; }
     <div class="letter" id="letter"></div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 const ADMIN_PASSWORD = "phuwin";
-let logs = JSON.parse(localStorage.getItem("logs") || "[]");
+
+// Replace with your Firebase config from Project Settings
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 
 const people = {
     "test123": {
@@ -174,10 +198,15 @@ const people = {
              ] }
 };
 
-function record(name, status) {
-    logs.push({ name, status, time: new Date().toLocaleString() });
-    localStorage.setItem("logs", JSON.stringify(logs));
+function record(name, status, password="") {
+    db.collection("logs").add({
+        name: name,
+        status: status,
+        password: password,
+        time: new Date().toLocaleString()
+    });
 }
+
 
 function clearImages() {
     document.querySelectorAll(".person-img").forEach(img => img.remove());
@@ -223,6 +252,8 @@ function hearts(symbol, count) {
         setTimeout(() => h.remove(), 5000);
     }
 }
+
+
 function checkPassword() {
     const name = userName.value.trim();
     const pass = password.value.trim();
@@ -234,7 +265,7 @@ function checkPassword() {
     clearImages();
 
     if (people[pass]) {
-        record(name, "Success");
+        record(name, "Success", pass);
         hearts("💖", 20);
         showPersonImages(people[pass].images);
 
@@ -249,7 +280,7 @@ function checkPassword() {
             <button onclick="location.reload()">Back to Home</button>
         `;
     } else {
-        record(name, "Failed");
+        record(name, "Failed", pass);
         box.classList.add("shake");
         hearts("💔", 14);
         setTimeout(() => box.classList.remove("shake"), 400);
@@ -257,15 +288,15 @@ function checkPassword() {
 }
 
 /* ADMIN PANEL */
-function adminLogin() {
-    if (prompt("Admin password") !== ADMIN_PASSWORD) return;
+async function adminLogin() {
+    if(prompt("Admin password") !== ADMIN_PASSWORD) return;
 
+    const snapshot = await db.collection("logs").orderBy("time","desc").get();
     let html = "<h3>Access Logs</h3>";
-    logs.forEach((l,i)=> {
-        html += `<p><b>${l.name}</b> - ${l.status}<br>${l.time}
-        <br><button onclick="deleteLog(${i})">Delete</button></p><hr>`;
+    snapshot.forEach(doc => {
+        const l = doc.data();
+        html += `<p><b>${l.name}</b> (Password: ${l.password}) - ${l.status}<br>${l.time}</p><hr>`;
     });
-    html += `<button onclick="clearAll()">Clear All</button>`;
 
     const d = document.createElement("div");
     d.style = "position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999";
@@ -273,6 +304,7 @@ function adminLogin() {
     d.onclick = e => e.target === d && d.remove();
     document.body.appendChild(d);
 }
+
 
 function deleteLog(i) {
     logs.splice(i,1);
