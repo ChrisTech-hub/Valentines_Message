@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <title>Valentine Surprise 💘</title>
 
 <style>
@@ -23,6 +24,13 @@ h1 {
 
 p{
     font-size: 1rem;
+}
+
+hr{
+    width: 100%;
+    border: 1px solid #ff4d6d;
+    z-index: 6;
+    opacity: 0.5;
 }
 
 .container {
@@ -47,8 +55,9 @@ input {
 }
 
 button {
+    width: 100%;
     margin-top: 15px;
-    padding: 10px 25px;
+    padding: 10px 0;
     border-radius: 20px;
     border: none;
     background: #ff4d6d;
@@ -68,6 +77,37 @@ button:hover { background: #e63b5c; }
     max-height: 50vh;      
     overflow-y: auto;      
     box-sizing: border-box;
+}
+
+.messageTo {
+    margin-top: 15px;
+}
+
+.messageTo .input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.messageTo input {
+    width: 100%;
+    padding: 12px 40px 12px 12px; /* space for send button */
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.messageTo .fa-send {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #ff4d6d;
+    font-size: 18px;
+}
+
+#messageBack{
+    position: relative;
 }
 
 .admin{
@@ -136,9 +176,17 @@ button:hover { background: #e63b5c; }
 
 <div class="container" id="box">
     <h1>Valentine Access</h1>
+    <hr>
 
     <input type="text" id="userName" placeholder="Enter your name" required>
-    <input type="password" id="password" placeholder="Password" required>
+    <input type="password" id="password" placeholder="Password (Provided)" required>
+
+    <div class="messageTo">
+        <div class="input-wrapper">
+            <input type="text" id="messageBack" placeholder="Write a Message to Christian (optional)">
+            <i class="fa fa-send" onclick="sendMessage()"></i>
+        </div>
+    </div>
 
     <button onclick="checkPassword()">Open 💌</button>
 
@@ -176,7 +224,7 @@ const people = {
         ]
     },
 
-     "barayMare08": {
+    "barayMare08": {
         name: "Baray/Mare",
         text: "I just wanted to take a moment to tell you how much your friendship means to me. Through all the laughs, the crazy moments, and even the times we just sit in silence, you’ve always been someone I can count on. I really appreciate how we understand each other without even needing words sometimes. You’ve been there in the good times and the not-so-good times, and that kind of friendship is rare. I hope we keep making memories together, laughing until our stomachs hurt, and supporting each other no matter what comes our way. Thanks for being an amazing friend. Here’s to many more adventures, secrets, and unforgettable moments ahead! Your friend, xoxo",
         images: [
@@ -184,21 +232,21 @@ const people = {
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/1718445989400.jpg",
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/1728090061025.jpg",
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/fccc54210b4c52bff2916ecccfbb0c3518ad5456/IMG20240529110045_00_011402.jpg",
-            
         ]
     },
     
-    "BSIT1-B": { name:"BSIT 1-B", 
-                 text: "I just want to take a moment to tell you how much you mean to me. You’ve always been there through the good days, the bad days, and all the random college chaos in between. Whenever I need someone, you show up, and that kind of loyalty and care is rare. Even though you did reveal my secret 😅, it honestly doesn’t change a thing. Mistakes happen, and it’s part of what makes us human. You’re still my bestie, my partner-in-crime, and one of the people I trust the most in this world. Thank you for laughing with me, supporting me, and making college life so much brighter. I’m really lucky to have you, and I hope we keep making memories and having each other’s backs no matter what. You really are the best, and I appreciate you more than words can ever show. 🫶", 
-                 images: [
+    "BSIT1-B": { 
+        name:"BSIT 1-B", 
+        text: "I just wanted to say thank you for making this college journey such an unforgettable experience. Each of you has added something special to my time here whether it’s the teamwork during projects, the laughs between classes, or just the daily support we give each other. Even though we all have different paths and goals, I feel lucky to have shared these moments with you. The memories we’ve created, the challenges we’ve faced together, and the friendships we’ve built will always hold a special place in my heart. I hope we continue to support and inspire each other, even beyond these college walls. Wishing everyone success, happiness, and endless opportunities in whatever comes next!", 
+        images: [
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/553d0360169b43be964c8b69992c904466ce32e5/612273463_25884572274528263_1443463016273151729_n.jpg",
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/553d0360169b43be964c8b69992c904466ce32e5/621256089_2376866916145302_8123482212709929544_n.jpg",
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/553d0360169b43be964c8b69992c904466ce32e5/626509530_1064029002580740_5083599679043519725_n.jpg",
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/553d0360169b43be964c8b69992c904466ce32e5/627231185_2307050259780404_1039529006496946537_n.jpg",
-             ] 
-               },
+        ] 
+    },
 
-    "teYangie01": {name: "Yang Paulina",
+     "teYangie01": {name: "Yang Paulina",
                    text: "I just want to take a moment to tell you how much you mean to me. You’ve always been there—through the good days, the bad days, and all the random college chaos in between. Whenever I need someone, you show up, and that kind of loyalty and care is rare. Even though you did reveal my secret 😅, it honestly doesn’t change a thing. Mistakes happen, and it’s part of what makes us human. You’re still my bestie, my partner-in-crime, and one of the people I trust the most in this world. Thank you for laughing with me, supporting me, and making college life so much brighter. I’m really lucky to have you, and I hope we keep making memories and having each other’s backs no matter what. You really are the best, and I appreciate you more than words can ever show. 🫶",
                    images:[
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/804a94ad32cecc8e58b2a558c348ed419afb9eeb/2419ea40-d020-4ebe-accd-886918e5ceb0.jpg",
@@ -208,7 +256,6 @@ const people = {
             "https://raw.githubusercontent.com/ChrisTech-hub/valentines_img/804a94ad32cecc8e58b2a558c348ed419afb9eeb/ebab1a21-2cd5-49a0-9c66-e8edd8696a9e.jpg"
             ]
                },
-
 };
 
 /* SAVE LOG */
@@ -221,8 +268,7 @@ function record(name, status, password="") {
     });
 }
 
-
-//Images and Animations
+// Images and Animations
 function clearImages() {
     document.querySelectorAll(".person-img").forEach(img => img.remove());
 }
@@ -281,7 +327,7 @@ function checkPassword() {
 
     if (people[pass]) {
         record(name, "Success", pass);
-        hearts("💖", 20);
+        hearts("💖", 50);
         showPersonImages(people[pass].images);
 
         userName.style.display = "none";
@@ -297,40 +343,62 @@ function checkPassword() {
     } else {
         record(name, "Failed", pass);
         box.classList.add("shake");
-        hearts("💔", 14);
+        hearts("💔", 50);
         setTimeout(() => box.classList.remove("shake"), 400);
     }
 }
 
+/* SEND MESSAGE */
+function sendMessage() {
+    const name = userName.value.trim();
+    const msg = document.getElementById("messageBack").value.trim();
+
+    if (!name) return alert("Please enter your name before sending a message 💖");
+    if (!msg) return alert("Please write a message before sending 💌");
+
+    db.collection("messages").add({
+        name: name,
+        message: msg,
+        time: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert("Message sent! 💌");
+        document.getElementById("messageBack").value = "";
+    }).catch(err => {
+        console.error(err);
+        alert("Error sending message ❌");
+    });
+}
 
 /* ADMIN PANEL */
 async function adminLogin() {
     if (prompt("Admin password") !== ADMIN_PASSWORD) return;
 
-    const snapshot = await db.collection("logs")
-        .orderBy("time","desc")
-        .get();
+    const logsSnapshot = await db.collection("logs").orderBy("time","desc").get();
+    const messagesSnapshot = await db.collection("messages").orderBy("time","desc").get();
 
-    let html = `
-        <h3>Access Logs</h3>
-        <button onclick="clearAllLogs()" 
-            style="background:red;color:white;padding:8px 15px;border:none;border-radius:10px;margin-bottom:15px;cursor:pointer;">
-            Clear All
-        </button>
-        <hr>
-    `;
+    let html = `<h3>Access Logs</h3>
+        <button onclick="clearAllLogs()" style="background:red;color:white;padding:8px 15px;border:none;border-radius:10px;margin-bottom:15px;cursor:pointer;">Clear All Logs</button>
+        <hr>`;
 
-    snapshot.forEach(doc => {
+    logsSnapshot.forEach(doc => {
         const l = doc.data();
         html += `
             <div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;">
                 <b>${l.name}</b> - ${l.status}<br>
                 ${l.time ? l.time.toDate().toLocaleString() : ""}
                 <br>
-                <button onclick="deleteLog('${doc.id}')" 
-                    style="margin-top:5px;background:#ff4d6d;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">
-                    Delete
-                </button>
+                <button onclick="deleteLog('${doc.id}')" style="margin-top:5px;background:#ff4d6d;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">Delete</button>
+            </div>
+        `;
+    });
+
+    html += `<h3>Messages</h3><hr>`;
+    messagesSnapshot.forEach(doc => {
+        const m = doc.data();
+        html += `
+            <div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;">
+                <b>${m.name}</b>: ${m.message}<br>
+                ${m.time ? m.time.toDate().toLocaleString() : ""}
             </div>
         `;
     });
@@ -338,12 +406,12 @@ async function adminLogin() {
     const panel = document.createElement("div");
     panel.id="adminPanel";
     panel.style="position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999;border-radius:15px;";
-    panel.innerHTML=html;
-    panel.onclick=e=>e.target===panel&&panel.remove();
+    panel.innerHTML = html;
+    panel.onclick = e => e.target === panel && panel.remove();
     document.body.appendChild(panel);
 }
 
-/* DELETE SINGLE */
+/* DELETE SINGLE LOG */
 async function deleteLog(id) {
     if (!confirm("Delete this log?")) return;
     await db.collection("logs").doc(id).delete();
@@ -351,17 +419,12 @@ async function deleteLog(id) {
     adminLogin();
 }
 
-/* CLEAR ALL */
+/* CLEAR ALL LOGS */
 async function clearAllLogs() {
     if (!confirm("Clear ALL logs?")) return;
-
     const snapshot = await db.collection("logs").get();
     const batch = db.batch();
-
-    snapshot.forEach(doc => {
-        batch.delete(doc.ref);
-    });
-
+    snapshot.forEach(doc => batch.delete(doc.ref));
     await batch.commit();
     document.getElementById("adminPanel").remove();
     alert("All logs deleted.");
