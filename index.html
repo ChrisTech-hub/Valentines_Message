@@ -17,21 +17,9 @@ body {
     overflow-x: hidden;
 }
 
-h1 { 
-    color: #ff4d6d; 
-    font-size: 1.8rem;
-}
-
-p{
-    font-size: 1rem;
-}
-
-hr{
-    width: 100%;
-    border: 1px solid #ff4d6d;
-    z-index: 6;
-    opacity: 0.5;
-}
+h1 { color: #ff4d6d; font-size: 1.8rem; }
+p{ font-size: 1rem; }
+hr{ width: 100%; border: 1px solid #ff4d6d; z-index: 6; opacity: 0.5; }
 
 .container {
     position: relative;
@@ -79,23 +67,15 @@ button:hover { background: #e63b5c; }
     box-sizing: border-box;
 }
 
-.messageTo {
-    margin-top: 15px;
-}
-
-.messageTo .input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
+.messageTo { margin-top: 15px; }
+.messageTo .input-wrapper { position: relative; width: 100%; }
 .messageTo input {
     width: 100%;
-    padding: 12px 40px 12px 12px; /* space for send button */
+    padding: 12px 40px 12px 12px;
     border-radius: 10px;
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
-
 .messageTo .fa-send {
     position: absolute;
     right: 10px;
@@ -106,9 +86,7 @@ button:hover { background: #e63b5c; }
     font-size: 18px;
 }
 
-#messageBack{
-    position: relative;
-}
+#messageBack{ position: relative; }
 
 .admin{
     position:fixed;
@@ -148,14 +126,8 @@ button:hover { background: #e63b5c; }
 }
 
 @keyframes floatRandom {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(var(--x), var(--y)) rotate(var(--r));
-        opacity: 0;
-    }
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
 }
 
 @keyframes floatSlow {
@@ -199,6 +171,7 @@ button:hover { background: #e63b5c; }
 
 <script>
 const ADMIN_PASSWORD = "phuwin";
+let currentAudio = null; // global audio object for stopping
 
 /* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
@@ -214,6 +187,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* PEOPLE */
+
 const people = {
     "barayMare08": {
         name: "Baray/Mare",
@@ -254,7 +228,16 @@ const people = {
                },
 };
 
-/* SAVE LOG */
+/* MUSIC FILES */
+const musicFiles = [
+    "https://raw.githubusercontent.com/ChrisTech-hub/valentines_music/main/SLANDER - Love Is Gone ft Dylan Mathew  Piano Cover By Welder Dias.mp3",
+    "https://raw.githubusercontent.com/ChrisTech-hub/valentines_music/main/Your Love - Juris  Piano Cover by Gerard Chua.mp3",
+    "https://raw.githubusercontent.com/ChrisTech-hub/valentines_music/main/1.mp3",
+    "https://raw.githubusercontent.com/ChrisTech-hub/valentines_music/main/2.mp3",
+];
+
+
+/* RECORD LOG */
 function record(name, status, password="") {
     db.collection("logs").add({
         name: name,
@@ -264,167 +247,77 @@ function record(name, status, password="") {
     });
 }
 
-// Images and Animations
-function clearImages() {
-    document.querySelectorAll(".person-img").forEach(img => img.remove());
-}
-
+// IMAGES & HEARTS
+function clearImages() { document.querySelectorAll(".person-img").forEach(img => img.remove()); }
 function showPersonImages(images) {
     images.forEach(src => {
-        for (let i = 0; i < 3; i++) {
-            const img = document.createElement("img");
-            img.src = src;
-            img.className = "person-img";
-            img.style.top = Math.random() * 70 + "%";
-            img.style.left = Math.random() * 80 + "%";
-            img.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+        for (let i=0;i<3;i++){
+            const img=document.createElement("img");
+            img.src=src; img.className="person-img";
+            img.style.top=Math.random()*70+"%";
+            img.style.left=Math.random()*80+"%";
+            img.style.transform=`rotate(${Math.random()*20-10}deg)`;
             document.body.appendChild(img);
         }
     });
 }
+function hearts(symbol,count){for(let i=0;i<count;i++){const h=document.createElement("div");h.className="heart";h.textContent=symbol;h.style.left=Math.random()*100+"vw";h.style.top=Math.random()*100+"vh";const x=(Math.random()*200-100)+"px",y=(Math.random()*200-100)+"px",r=(Math.random()*360-180)+"deg";h.style.setProperty("--x",x);h.style.setProperty("--y",y);h.style.setProperty("--r",r);h.style.animation=`floatRandom ${2+Math.random()*3}s ease-out forwards`;document.body.appendChild(h);setTimeout(()=>h.remove(),5000);}}
 
-function hearts(symbol, count) {
-    for (let i = 0; i < count; i++) {
-        const h = document.createElement("div");
-        h.className = "heart";
-        h.textContent = symbol;
-
-        // Random starting position
-        h.style.left = Math.random() * 100 + "vw";
-        h.style.top = Math.random() * 100 + "vh";
-
-        // Random direction and rotation
-        const x = (Math.random() * 200 - 100) + "px"; // horizontal movement
-        const y = (Math.random() * 200 - 100) + "px"; // vertical movement
-        const r = (Math.random() * 360 - 180) + "deg"; // rotation
-
-        h.style.setProperty("--x", x);
-        h.style.setProperty("--y", y);
-        h.style.setProperty("--r", r);
-        h.style.animation = `floatRandom ${2 + Math.random() * 3}s ease-out forwards`;
-
-        document.body.appendChild(h);
-
-        // Remove after animation
-        setTimeout(() => h.remove(), 5000);
-    }
+// PLAY RANDOM MUSIC
+function playRandomMusic(){
+    if(!musicFiles||musicFiles.length===0)return;
+    const randomIndex=Math.floor(Math.random()*musicFiles.length);
+    currentAudio=new Audio(musicFiles[randomIndex]);
+    currentAudio.volume=0.5;
+    currentAudio.play().catch(err=>console.log("Audio play failed",err));
 }
 
+// STOP MUSIC
+function stopMusic(){ if(currentAudio){ currentAudio.pause(); currentAudio.currentTime=0; currentAudio=null; } }
+
 /* CHECK PASSWORD */
-function checkPassword() {
-    const name = userName.value.trim();
-    const pass = password.value.trim();
-    const box = document.getElementById("box");
-    const letter = document.getElementById("letter");
-
-    if (!name) return alert("Please enter your name 💖");
-
+function checkPassword(){
+    const name=userName.value.trim(), pass=password.value.trim();
+    const box=document.getElementById("box"), letter=document.getElementById("letter");
+    if(!name) return alert("Please enter your name 💖");
     clearImages();
-
-    if (people[pass]) {
-        record(name, "Success", pass);
-        hearts("💖", 50);
+    if(people[pass]){
+        record(name,"Success",pass);
+        hearts("💖",50);
         showPersonImages(people[pass].images);
-
-        userName.style.display = "none";
-        password.style.display = "none";
-        box.querySelector("button").style.display = "none";
-
-        letter.style.display = "block";
-        letter.innerHTML = `
+        playRandomMusic();
+        userName.style.display="none";
+        password.style.display="none";
+        box.querySelector("button").style.display="none";
+        letter.style.display="block";
+        letter.innerHTML=`
             <h3>Dear ${people[pass].name},</h3>
             <p>${people[pass].text}</p>
-            <button onclick="location.reload()">Back to Home</button>
+            <button onclick="stopMusic();location.reload()">Back to Home</button>
         `;
-    } else {
-        record(name, "Failed", pass);
+    }else{
+        record(name,"Failed",pass);
         box.classList.add("shake");
-        hearts("💔", 50);
-        setTimeout(() => box.classList.remove("shake"), 400);
+        hearts("💔",50);
+        setTimeout(()=>box.classList.remove("shake"),400);
     }
 }
 
 /* SEND MESSAGE */
-function sendMessage() {
-    const name = userName.value.trim();
-    const msg = document.getElementById("messageBack").value.trim();
-
-    if (!name) return alert("Please enter your name before sending a message 💖");
-    if (!msg) return alert("Please write a message before sending 💌");
-
+function sendMessage(){
+    const name=userName.value.trim(), msg=document.getElementById("messageBack").value.trim();
+    if(!name) return alert("Please enter your name before sending a message 💖");
+    if(!msg) return alert("Please write a message before sending 💌");
     db.collection("messages").add({
-        name: name,
-        message: msg,
-        time: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        alert("Message sent! 💌");
-        document.getElementById("messageBack").value = "";
-    }).catch(err => {
-        console.error(err);
-        alert("Error sending message ❌");
-    });
+        name:name,message:msg,time:firebase.firestore.FieldValue.serverTimestamp()
+    }).then(()=>{ alert("Message sent! 💌"); document.getElementById("messageBack").value=""; })
+    .catch(err=>{ console.error(err); alert("Error sending message ❌"); });
 }
 
-/* ADMIN PANEL */
-async function adminLogin() {
-    if (prompt("Admin password") !== ADMIN_PASSWORD) return;
-
-    const logsSnapshot = await db.collection("logs").orderBy("time","desc").get();
-    const messagesSnapshot = await db.collection("messages").orderBy("time","desc").get();
-
-    let html = `<h3>Access Logs</h3>
-        <button onclick="clearAllLogs()" style="background:red;color:white;padding:8px 15px;border:none;border-radius:10px;margin-bottom:15px;cursor:pointer;">Clear All Logs</button>
-        <hr>`;
-
-    logsSnapshot.forEach(doc => {
-        const l = doc.data();
-        html += `
-            <div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;">
-                <b>${l.name}</b> - ${l.status}<br>
-                ${l.time ? l.time.toDate().toLocaleString() : ""}
-                <br>
-                <button onclick="deleteLog('${doc.id}')" style="margin-top:5px;background:#ff4d6d;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">Delete</button>
-            </div>
-        `;
-    });
-
-    html += `<h3>Messages</h3><hr>`;
-    messagesSnapshot.forEach(doc => {
-        const m = doc.data();
-        html += `
-            <div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;">
-                <b>${m.name}</b>: ${m.message}<br>
-                ${m.time ? m.time.toDate().toLocaleString() : ""}
-            </div>
-        `;
-    });
-
-    const panel = document.createElement("div");
-    panel.id="adminPanel";
-    panel.style="position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999;border-radius:15px;";
-    panel.innerHTML = html;
-    panel.onclick = e => e.target === panel && panel.remove();
-    document.body.appendChild(panel);
-}
-
-/* DELETE SINGLE LOG */
-async function deleteLog(id) {
-    if (!confirm("Delete this log?")) return;
-    await db.collection("logs").doc(id).delete();
-    document.getElementById("adminPanel").remove();
-    adminLogin();
-}
-
-/* CLEAR ALL LOGS */
-async function clearAllLogs() {
-    if (!confirm("Clear ALL logs?")) return;
-    const snapshot = await db.collection("logs").get();
-    const batch = db.batch();
-    snapshot.forEach(doc => batch.delete(doc.ref));
-    await batch.commit();
-    document.getElementById("adminPanel").remove();
-    alert("All logs deleted.");
-}
+/* ADMIN PANEL & DELETE/CLEAR LOGS */
+async function adminLogin(){ if(prompt("Admin password")!==ADMIN_PASSWORD)return; const logsSnapshot=await db.collection("logs").orderBy("time","desc").get(); const messagesSnapshot=await db.collection("messages").orderBy("time","desc").get(); let html=`<h3>Access Logs</h3><button onclick="clearAllLogs()" style="background:red;color:white;padding:8px 15px;border:none;border-radius:10px;margin-bottom:15px;cursor:pointer;">Clear All Logs</button><hr>`; logsSnapshot.forEach(doc=>{const l=doc.data(); html+=`<div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;"><b>${l.name}</b> - ${l.status}<br>${l.time?l.time.toDate().toLocaleString():""}<br><button onclick="deleteLog('${doc.id}')" style="margin-top:5px;background:#ff4d6d;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">Delete</button></div>`;}); html+=`<h3>Messages</h3><hr>`; messagesSnapshot.forEach(doc=>{const m=doc.data(); html+=`<div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;"><b>${m.name}</b>: ${m.message}<br>${m.time?m.time.toDate().toLocaleString():""}</div>`;}); const panel=document.createElement("div"); panel.id="adminPanel"; panel.style="position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999;border-radius:15px;"; panel.innerHTML=html; panel.onclick=e=>e.target===panel&&panel.remove(); document.body.appendChild(panel); }
+async function deleteLog(id){ if(!confirm("Delete this log?"))return; await db.collection("logs").doc(id).delete(); document.getElementById("adminPanel").remove(); adminLogin(); }
+async function clearAllLogs(){ if(!confirm("Clear ALL logs?"))return; const snapshot=await db.collection("logs").get(); const batch=db.batch(); snapshot.forEach(doc=>batch.delete(doc.ref)); await batch.commit(); document.getElementById("adminPanel").remove(); alert("All logs deleted."); }
 </script>
 
 </body>
