@@ -16,12 +16,12 @@ body {
     overflow-x: hidden;
 }
 
-h1 {
-    color: #ff4d6d;
+h1 { 
+    color: #ff4d6d; 
     font-size: 1.8rem;
 }
 
-p {
+p{
     font-size: 1rem;
 }
 
@@ -132,8 +132,7 @@ button:hover { background: #e63b5c; }
 
 <body>
 
-<!-- admin icon -->
-<div class="admin"onclick="adminLogin()">⚙️</div>
+<div class="admin" onclick="adminLogin()">⚙️</div>
 
 <div class="container" id="box">
     <h1>Valentine Access</h1>
@@ -149,23 +148,24 @@ button:hover { background: #e63b5c; }
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
 const ADMIN_PASSWORD = "phuwin";
 
-// Replace with your Firebase config from Project Settings
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyDVMdVdmTUaOtLKntpzV0C00cfWTxdQZYA",
+  authDomain: "valentine-access-free.firebaseapp.com",
+  projectId: "valentine-access-free",
+  storageBucket: "valentine-access-free.firebasestorage.app",
+  messagingSenderId: "114132752770",
+  appId: "1:114132752770:web:7ef60ede7dd209ebbc579b"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-
+/* PEOPLE */
 const people = {
     "test123": {
         name: "Tester",
@@ -198,16 +198,18 @@ const people = {
              ] }
 };
 
+/* SAVE LOG */
 function record(name, status, password="") {
     db.collection("logs").add({
         name: name,
         status: status,
         password: password,
-        time: new Date().toLocaleString()
+        time: firebase.firestore.FieldValue.serverTimestamp()
     });
 }
 
 
+//Images and Animations
 function clearImages() {
     document.querySelectorAll(".person-img").forEach(img => img.remove());
 }
@@ -253,7 +255,7 @@ function hearts(symbol, count) {
     }
 }
 
-
+/* CHECK PASSWORD */
 function checkPassword() {
     const name = userName.value.trim();
     const pass = password.value.trim();
@@ -287,36 +289,69 @@ function checkPassword() {
     }
 }
 
+
 /* ADMIN PANEL */
 async function adminLogin() {
-    if(prompt("Admin password") !== ADMIN_PASSWORD) return;
+    if (prompt("Admin password") !== ADMIN_PASSWORD) return;
 
-    const snapshot = await db.collection("logs").orderBy("time","desc").get();
-    let html = "<h3>Access Logs</h3>";
+    const snapshot = await db.collection("logs")
+        .orderBy("time","desc")
+        .get();
+
+    let html = `
+        <h3>Access Logs</h3>
+        <button onclick="clearAllLogs()" 
+            style="background:red;color:white;padding:8px 15px;border:none;border-radius:10px;margin-bottom:15px;cursor:pointer;">
+            Clear All
+        </button>
+        <hr>
+    `;
+
     snapshot.forEach(doc => {
         const l = doc.data();
-        html += `<p><b>${l.name}</b> (Password: ${l.password}) - ${l.status}<br>${l.time}</p><hr>`;
+        html += `
+            <div style="margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:10px;">
+                <b>${l.name}</b> - ${l.status}<br>
+                ${l.time ? l.time.toDate().toLocaleString() : ""}
+                <br>
+                <button onclick="deleteLog('${doc.id}')" 
+                    style="margin-top:5px;background:#ff4d6d;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">
+                    Delete
+                </button>
+            </div>
+        `;
     });
 
-    const d = document.createElement("div");
-    d.style = "position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999";
-    d.innerHTML = html;
-    d.onclick = e => e.target === d && d.remove();
-    document.body.appendChild(d);
+    const panel = document.createElement("div");
+    panel.id="adminPanel";
+    panel.style="position:fixed;inset:10%;background:#fff;padding:20px;overflow:auto;z-index:9999;border-radius:15px;";
+    panel.innerHTML=html;
+    panel.onclick=e=>e.target===panel&&panel.remove();
+    document.body.appendChild(panel);
 }
 
-
-function deleteLog(i) {
-    logs.splice(i,1);
-    localStorage.setItem("logs", JSON.stringify(logs));
-    location.reload();
+/* DELETE SINGLE */
+async function deleteLog(id) {
+    if (!confirm("Delete this log?")) return;
+    await db.collection("logs").doc(id).delete();
+    document.getElementById("adminPanel").remove();
+    adminLogin();
 }
 
-function clearAll() {
-    if (confirm("Clear all logs?")) {
-        localStorage.removeItem("logs");
-        location.reload();
-    }
+/* CLEAR ALL */
+async function clearAllLogs() {
+    if (!confirm("Clear ALL logs?")) return;
+
+    const snapshot = await db.collection("logs").get();
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+        batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    document.getElementById("adminPanel").remove();
+    alert("All logs deleted.");
 }
 </script>
 
